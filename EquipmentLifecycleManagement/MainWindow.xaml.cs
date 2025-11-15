@@ -90,7 +90,7 @@ namespace EquipmentLifecycleManager
 
         private void TxtSearch_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (txtSearch.Text != "Поиск оборудования..." && !string.IsNullOrWhiteSpace(txtSearch.Text))
+            if (txtSearch.Text != "Поиск оборудования..." && !string.IsNullOrWhiteSpace(.Text))
             {
                 // Фильтрация оборудования
                 var searchText = txtSearch.Text.ToLower();
