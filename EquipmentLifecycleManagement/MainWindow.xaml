@@ -16,7 +16,7 @@
         </Grid.RowDefinitions>
 
         <!-- Header -->
-        <Border Grid.Row="0" Background="#2E86AB" Padding="10">
+        <Border Grid.Row="0" Background="Azure" Padding="10">
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="🏭 Система управления жизненным циклом оборудования" 
                           Foreground="White" FontSize="16" FontWeight="Bold"/>
@@ -55,11 +55,10 @@
                 </StackPanel>
             </Border>
 
-            <!-- Content Area -->
             <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto">
                 <StackPanel Margin="20">
 
-                    <!-- Equipment List -->
+
                     <StackPanel x:Name="panelEquipment" Visibility="Visible">
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,15">
                             <TextBlock Text="Список оборудования" FontSize="18" FontWeight="Bold"/>
@@ -93,7 +92,6 @@
                         </StackPanel>
                     </StackPanel>
 
-                    <!-- Maintenance Panel -->
                     <StackPanel x:Name="panelMaintenance" Visibility="Collapsed">
                         <TextBlock Text="Планирование технического обслуживания" 
                                   FontSize="18" FontWeight="Bold" Margin="0,0,0,15"/>
@@ -125,7 +123,7 @@
                         </StackPanel>
                     </StackPanel>
 
-                    <!-- Reports Panel -->
+
                     <StackPanel x:Name="panelReports" Visibility="Collapsed">
                         <TextBlock Text="Отчеты и статистика" 
                                   FontSize="18" FontWeight="Bold" Margin="0,0,0,15"/>
@@ -142,7 +140,7 @@
                                 IsReadOnly="True" Background="#F5F5F5"/>
                     </StackPanel>
 
-                    <!-- Statistics -->
+
                     <StackPanel x:Name="panelStatistics" Margin="0,20,0,0">
                         <TextBlock Text="Статистика" FontSize="16" FontWeight="Bold" Margin="0,0,0,10"/>
 
