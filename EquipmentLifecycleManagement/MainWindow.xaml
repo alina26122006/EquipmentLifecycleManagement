@@ -1,0 +1,199 @@
+﻿<Window x:Class="EquipmentLifecycleManagement.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:EquipmentLifecycleManagement"
+        mc:Ignorable="d"
+        Title="Система управления оборудованием" Height="600" Width="900"
+        WindowStartupLocation="CenterScreen">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Border Grid.Row="0" Background="#2E86AB" Padding="10">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="🏭 Система управления жизненным циклом оборудования" 
+                          Foreground="White" FontSize="16" FontWeight="Bold"/>
+                <TextBlock Text="Версия 1.0" Foreground="#E0E0E0" FontSize="12" 
+                          Margin="20,0,0,0" VerticalAlignment="Bottom"/>
+            </StackPanel>
+        </Border>
+
+        <!-- Main Content -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="200"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Navigation Menu -->
+            <Border Grid.Column="0" Background="#F5F5F5" BorderBrush="#CCCCCC" BorderThickness="0,0,1,0">
+                <StackPanel Margin="10">
+                    <TextBlock Text="Меню" FontWeight="Bold" Margin="0,0,0,10"/>
+
+                    <Button x:Name="btnEquipment" Content="📊 Оборудование" 
+                            Background="Transparent" BorderThickness="0" HorizontalContentAlignment="Left"
+                            Padding="10,8" Margin="0,2" Click="BtnEquipment_Click"/>
+                    <Button x:Name="btnMaintenance" Content="🔧 Техобслуживание" 
+                            Background="Transparent" BorderThickness="0" HorizontalContentAlignment="Left"
+                            Padding="10,8" Margin="0,2" Click="BtnMaintenance_Click"/>
+                    <Button x:Name="btnReports" Content="📈 Отчеты" 
+                            Background="Transparent" BorderThickness="0" HorizontalContentAlignment="Left"
+                            Padding="10,8" Margin="0,2" Click="BtnReports_Click"/>
+
+                    <Separator Margin="0,20,0,10"/>
+
+                    <Button x:Name="btnAddEquipment" Content="➕ Добавить оборудование" 
+                            Background="#4CAF50" Foreground="White" Padding="10,5"
+                            Click="BtnAddEquipment_Click"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Content Area -->
+            <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto">
+                <StackPanel Margin="20">
+
+                    <!-- Equipment List -->
+                    <StackPanel x:Name="panelEquipment" Visibility="Visible">
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,15">
+                            <TextBlock Text="Список оборудования" FontSize="18" FontWeight="Bold"/>
+                            <TextBox x:Name="txtSearch" Width="200" Margin="20,0,0,0" 
+                                    Padding="5" 
+                                    Text="Поиск оборудования..." 
+                                    Foreground="Gray"
+                                    GotFocus="TxtSearch_GotFocus" 
+                                    LostFocus="TxtSearch_LostFocus"
+                                    TextChanged="TxtSearch_TextChanged"/>
+                        </StackPanel>
+
+                        <DataGrid x:Name="dgEquipment" AutoGenerateColumns="False" 
+                                 Height="300" IsReadOnly="True"
+                                 SelectionChanged="DgEquipment_SelectionChanged">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="50"/>
+                                <DataGridTextColumn Header="Наименование" Binding="{Binding Name}" Width="200"/>
+                                <DataGridTextColumn Header="Инв. номер" Binding="{Binding InventoryNumber}" Width="100"/>
+                                <DataGridTextColumn Header="Модель" Binding="{Binding Model}" Width="150"/>
+                                <DataGridTextColumn Header="Статус" Binding="{Binding Status}" Width="100"/>
+                                <DataGridTextColumn Header="Дата ввода" Binding="{Binding CommissionDate,StringFormat=dd.MM.yyyy}" Width="100"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+
+                        <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                            <Button x:Name="btnEditEquipment" Content="✏️ Редактировать" 
+                                    Click="BtnEditEquipment_Click" Margin="0,0,10,0"/>
+                            <Button x:Name="btnDeleteEquipment" Content="🗑️ Удалить" 
+                                    Click="BtnDeleteEquipment_Click" Background="#F44336" Foreground="White"/>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <!-- Maintenance Panel -->
+                    <StackPanel x:Name="panelMaintenance" Visibility="Collapsed">
+                        <TextBlock Text="Планирование технического обслуживания" 
+                                  FontSize="18" FontWeight="Bold" Margin="0,0,0,15"/>
+
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                            <TextBlock Text="Предстоящие обслуживания:" FontWeight="SemiBold"/>
+                            <TextBlock x:Name="txtUpcomingCount" Text="0" FontWeight="Bold" 
+                                      Foreground="#2E86AB" Margin="5,0,0,0"/>
+                        </StackPanel>
+
+                        <ListBox x:Name="lbMaintenance" Height="200" BorderThickness="1">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Margin="5">
+                                        <TextBlock Text="{Binding EquipmentName}" FontWeight="Bold"/>
+                                        <TextBlock Text="{Binding PlannedDate,StringFormat='Запланировано на: {0:dd.MM.yyyy}'}" 
+                                                  Foreground="#666"/>
+                                        <TextBlock Text="{Binding Status}" Foreground="#999" FontSize="10"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+
+                        <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                            <Button x:Name="btnAddMaintenance" Content="➕ Добавить ТО" 
+                                    Click="BtnAddMaintenance_Click" Margin="0,0,10,0"/>
+                            <Button x:Name="btnCompleteMaintenance" Content="✅ Выполнено" 
+                                    Click="BtnCompleteMaintenance_Click"/>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <!-- Reports Panel -->
+                    <StackPanel x:Name="panelReports" Visibility="Collapsed">
+                        <TextBlock Text="Отчеты и статистика" 
+                                  FontSize="18" FontWeight="Bold" Margin="0,0,0,15"/>
+
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                            <Button x:Name="btnEquipmentReport" Content="📋 Отчет по оборудованию" 
+                                    Click="BtnEquipmentReport_Click" Margin="0,0,10,0" Padding="10,5"/>
+                            <Button x:Name="btnMaintenanceReport" Content="🔧 Отчет по ТО" 
+                                    Click="BtnMaintenanceReport_Click" Padding="10,5"/>
+                        </StackPanel>
+
+                        <TextBox x:Name="txtReport" Height="200" Margin="0,10,0,0" 
+                                TextWrapping="Wrap" VerticalScrollBarVisibility="Auto"
+                                IsReadOnly="True" Background="#F5F5F5"/>
+                    </StackPanel>
+
+                    <!-- Statistics -->
+                    <StackPanel x:Name="panelStatistics" Margin="0,20,0,0">
+                        <TextBlock Text="Статистика" FontSize="16" FontWeight="Bold" Margin="0,0,0,10"/>
+
+                        <WrapPanel>
+                            <Border Background="#E8F5E8" BorderBrush="#4CAF50" BorderThickness="1" 
+                                   Margin="0,0,10,10" Padding="10" CornerRadius="5">
+                                <StackPanel>
+                                    <TextBlock Text="Всего оборудования" FontSize="12" Foreground="#666"/>
+                                    <TextBlock x:Name="txtTotalEquipment" Text="0" FontSize="18" FontWeight="Bold"/>
+                                </StackPanel>
+                            </Border>
+
+                            <Border Background="#E3F2FD" BorderBrush="#2196F3" BorderThickness="1" 
+                                   Margin="0,0,10,10" Padding="10" CornerRadius="5">
+                                <StackPanel>
+                                    <TextBlock Text="В работе" FontSize="12" Foreground="#666"/>
+                                    <TextBlock x:Name="txtActiveEquipment" Text="0" FontSize="18" FontWeight="Bold"/>
+                                </StackPanel>
+                            </Border>
+
+                            <Border Background="#FFF3E0" BorderBrush="#FF9800" BorderThickness="1" 
+                                   Margin="0,0,10,10" Padding="10" CornerRadius="5">
+                                <StackPanel>
+                                    <TextBlock Text="На обслуживании" FontSize="12" Foreground="#666"/>
+                                    <TextBlock x:Name="txtMaintenanceEquipment" Text="0" FontSize="18" FontWeight="Bold"/>
+                                </StackPanel>
+                            </Border>
+
+                            <Border Background="#FFEBEE" BorderBrush="#F44336" BorderThickness="1" 
+                                   Margin="0,0,10,10" Padding="10" CornerRadius="5">
+                                <StackPanel>
+                                    <TextBlock Text="Списано" FontSize="12" Foreground="#666"/>
+                                    <TextBlock x:Name="txtRetiredEquipment" Text="0" FontSize="18" FontWeight="Bold"/>
+                                </StackPanel>
+                            </Border>
+                        </WrapPanel>
+                    </StackPanel>
+
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
+
+        <!-- Status Bar -->
+        <StatusBar Grid.Row="2" Background="#E0E0E0">
+            <StatusBarItem>
+                <TextBlock x:Name="txtStatus" Text="Готов к работе"/>
+            </StatusBarItem>
+            <StatusBarItem HorizontalAlignment="Right">
+                <TextBlock x:Name="txtUser" Text="Пользователь: Администратор"/>
+            </StatusBarItem>
+        </StatusBar>
+
+    </Grid>
+</Window>
