@@ -99,7 +99,7 @@ namespace EquipmentLifecycleManager
                                        equipment.InventoryNumber.ToLower().Contains(searchText) ||
                                        equipment.Model.ToLower().Contains(searchText))
                     .ToList();
-                txtStatus.Text = $"Найдено: {filteredEquipmentList.Count} оборудования";
+                txtStatus.Text = $"Найдено: {filteredEquipmentList.Count} оборудования"; 
             }
             else
             {
