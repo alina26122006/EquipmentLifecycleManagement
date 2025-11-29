@@ -235,35 +235,35 @@ namespace EquipmentLifecycleManager
         {
             try
             {
-                var newEquipment = new Equipment
-                {
-                    Name = "Новое оборудование",
-                    InventoryNumber = $"INV{Guid.NewGuid().ToString().Substring(0, 8)}",
-                    Model = "Модель",
-                    Status = "В работе",
-                    CommissionDate = DateTime.Now
-                };
+                var editWindow = new EquipmentEditWindow();
+                editWindow.Owner = this;
 
-                if (dbContext?.Database.CanConnect() == true)
+                if (editWindow.ShowDialog() == true)
                 {
-                    // Сохраняем в БД
-                    dbContext.Equipment.Add(newEquipment);
-                    dbContext.SaveChanges();
+                    var newEquipment = editWindow.ResultEquipment;
 
-                    // Обновляем список из БД
-                    equipmentList = dbContext.Equipment.ToList();
+                    if (dbContext?.Database.CanConnect() == true)
+                    {
+                        // Сохраняем в БД
+                        dbContext.Equipment.Add(newEquipment);
+                        dbContext.SaveChanges();
+
+                        // Обновляем список из БД
+                        equipmentList = dbContext.Equipment.ToList();
+                        txtStatus.Text = "✅ Оборудование добавлено в базу данных";
+                    }
+                    else
+                    {
+                        // Сохраняем в памяти
+                        newEquipment.Id = equipmentList.Count > 0 ? equipmentList.Max(e => e.Id) + 1 : 1;
+                        equipmentList.Add(newEquipment);
+                        txtStatus.Text = "✅ Оборудование добавлено (данные в памяти)";
+                    }
+
+                    filteredEquipmentList = new List<Equipment>(equipmentList);
+                    LoadEquipmentData();
+                    UpdateStatistics();
                 }
-                else
-                {
-                    // Сохраняем в памяти
-                    newEquipment.Id = equipmentList.Count > 0 ? equipmentList.Max(e => e.Id) + 1 : 1;
-                    equipmentList.Add(newEquipment);
-                }
-
-                filteredEquipmentList = new List<Equipment>(equipmentList);
-                LoadEquipmentData();
-                UpdateStatistics();
-                txtStatus.Text = "Оборудование добавлено";
             }
             catch (Exception ex)
             {
@@ -276,9 +276,42 @@ namespace EquipmentLifecycleManager
         {
             if (dgEquipment.SelectedItem is Equipment selectedEquipment)
             {
-                selectedEquipment.Name = $"{selectedEquipment.Name} (изм.)";
-                LoadEquipmentData();
-                txtStatus.Text = "Оборудование отредактировано";
+                try
+                {
+                    var editWindow = new EquipmentEditWindow(selectedEquipment);
+                    editWindow.Owner = this;
+
+                    if (editWindow.ShowDialog() == true)
+                    {
+                        var updatedEquipment = editWindow.ResultEquipment;
+
+                        // Обновляем данные
+                        selectedEquipment.Name = updatedEquipment.Name;
+                        selectedEquipment.InventoryNumber = updatedEquipment.InventoryNumber;
+                        selectedEquipment.Model = updatedEquipment.Model;
+                        selectedEquipment.Status = updatedEquipment.Status;
+                        selectedEquipment.CommissionDate = updatedEquipment.CommissionDate;
+
+                        if (dbContext?.Database.CanConnect() == true)
+                        {
+                            // Сохраняем изменения в БД
+                            dbContext.SaveChanges();
+                            txtStatus.Text = "Изменения сохранены в базе данных";
+                        }
+                        else
+                        {
+                            txtStatus.Text = "Изменения сохранены (данные в памяти)";
+                        }
+
+                        LoadEquipmentData();
+                        UpdateStatistics();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Ошибка редактирования: {ex.Message}", "Ошибка",
+                                  MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
             else
             {
@@ -286,6 +319,7 @@ namespace EquipmentLifecycleManager
                               MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
+        
 
         private void BtnDeleteEquipment_Click(object sender, RoutedEventArgs e)
         {

@@ -51,7 +51,8 @@
 
                     <Button x:Name="btnAddEquipment" Content="➕ Добавить оборудование" 
                             Background="#4CAF50" Foreground="White" Padding="10,5"
-                            Click="BtnAddEquipment_Click"/>
+                            Click="BtnAddEquipment_Click"
+                            ToolTip="Добавить новое оборудование в систему"/>
                 </StackPanel>
             </Border>
 
@@ -86,12 +87,19 @@
 
                         <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
                             <Button x:Name="btnEditEquipment" Content="✏️ Редактировать" 
-                                    Click="BtnEditEquipment_Click" Margin="0,0,10,0"/>
+                                    Click="BtnEditEquipment_Click" 
+                                    ToolTip="Редактировать выбранное оборудование"
+                                    Margin="0,0,10,0"/>
+                            
                             <Button x:Name="btnDeleteEquipment" Content="🗑️ Удалить" 
-                                    Click="BtnDeleteEquipment_Click" Background="#F44336" Foreground="White"/>
+                                    Click="BtnDeleteEquipment_Click"
+                                    ToolTip="Добавить новое техническое обслуживание"
+                                    Background="#F44336" Foreground="White"/>
+                            
                             <Button x:Name="btnTestDB" Content="🔍 Проверить БД" 
                             Background="Transparent" BorderThickness="0" HorizontalContentAlignment="Left"
                             Padding="10,8" Click="BtnTestDB_Click" RenderTransformOrigin="0.827,0.599"/>
+                            
                         </StackPanel>
                     </StackPanel>
 
