@@ -11,7 +11,7 @@ namespace EquipmentLifecycleManager.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(@"Server=DESKTOP-QOG2EQH\lina;Database=EquipmentLifecycleDB;Trusted_Connection=true;TrustServerCertificate=true;");
+            optionsBuilder.UseSqlServer(@"Server=DESKTOP-QOG2EQH;Database=EquipmentLifecycleDB;Trusted_Connection=true;TrustServerCertificate=true;");
         }
     }
 
