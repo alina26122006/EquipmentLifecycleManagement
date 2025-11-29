@@ -1,9 +1,11 @@
-﻿using System;
+﻿using EquipmentLifecycleManager.Data;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using Microsoft.EntityFrameworkCore;
 
 namespace EquipmentLifecycleManager
 {
@@ -12,46 +14,133 @@ namespace EquipmentLifecycleManager
         private List<Equipment> equipmentList;
         private List<Maintenance> maintenanceList;
         private List<Equipment> filteredEquipmentList;
+        private AppDbContext dbContext;
 
         public MainWindow()
         {
             InitializeComponent();
+
+            equipmentList = new List<Equipment>();
+            maintenanceList = new List<Maintenance>();
+            filteredEquipmentList = new List<Equipment>();
+
             InitializeData();
+            InitializeDatabase();
             LoadEquipmentData();
             UpdateStatistics();
         }
 
+        private void InitializeDatabase()
+        {
+            try
+            {
+                dbContext = new AppDbContext();
+
+                // Проверяем подключение к БД
+                bool canConnect = dbContext.Database.CanConnect();
+
+                if (canConnect)
+                {
+                    // Создаем таблицы если их нет
+                    dbContext.Database.EnsureCreated();
+                    txtStatus.Text = "База данных подключена успешно";
+
+                    // Добавляем тестовые данные если таблицы пустые
+                    if (!dbContext.Equipment.Any())
+                    {
+                        AddTestData();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка подключения к БД: {ex.Message}\n\nПриложение будет работать с данными в памяти.",
+                              "Ошибка БД",
+                              MessageBoxButton.OK, MessageBoxImage.Warning);
+                txtStatus.Text = "⚠️ Режим работы: данные в памяти (БД не доступна)";
+            }
+        }
+
+        private void AddTestData()
+        {
+            var testEquipment = new List<Equipment>
+    {
+        new Equipment { Name = "Токарный станок CNC-500", InventoryNumber = "INV001",
+                       Model = "CNC-500", Status = "В работе", CommissionDate = new DateTime(2023, 1, 15) },
+        new Equipment { Name = "Фрезерный станок FZ-200", InventoryNumber = "INV002",
+                       Model = "FZ-200", Status = "На обслуживании", CommissionDate = new DateTime(2023, 3, 20) },
+        new Equipment { Name = "Пресс гидравлический PH-100", InventoryNumber = "INV003",
+                       Model = "PH-100", Status = "В работе", CommissionDate = new DateTime(2023, 5, 10) },
+        new Equipment { Name = "Сверлильный станок SD-50", InventoryNumber = "INV004",
+                       Model = "SD-50", Status = "Списан", CommissionDate = new DateTime(2022, 8, 1) }
+    };
+
+            dbContext.Equipment.AddRange(testEquipment);
+            dbContext.SaveChanges();
+
+            var equipment = dbContext.Equipment.First();
+            var testMaintenance = new List<Maintenance>
+    {
+        new Maintenance { EquipmentName = "Токарный станок CNC-500", EquipmentId = equipment.Id,
+                        PlannedDate = DateTime.Now.AddDays(7), Status = "Запланировано" },
+        new Maintenance { EquipmentName = "Фрезерный станок FZ-200", EquipmentId = equipment.Id,
+                        PlannedDate = DateTime.Now.AddDays(2), Status = "В работе" },
+        new Maintenance { EquipmentName = "Пресс гидравлический PH-100", EquipmentId = equipment.Id,
+                        PlannedDate = DateTime.Now.AddDays(14), Status = "Запланировано" }
+    };
+
+            dbContext.Maintenance.AddRange(testMaintenance);
+            dbContext.SaveChanges();
+        }
+
         private void InitializeData()
         {
-            // Тестовые данные оборудования
-            equipmentList = new List<Equipment>
+            try
             {
-                new Equipment { Id = 1, Name = "Токарный станок CNC-500", InventoryNumber = "INV001",
-                               Model = "CNC-500", Status = "В работе", CommissionDate = new DateTime(2023, 1, 15) },
-                new Equipment { Id = 2, Name = "Фрезерный станок FZ-200", InventoryNumber = "INV002",
-                               Model = "FZ-200", Status = "На обслуживании", CommissionDate = new DateTime(2023, 3, 20) },
-                new Equipment { Id = 3, Name = "Пресс гидравлический PH-100", InventoryNumber = "INV003",
-                               Model = "PH-100", Status = "В работе", CommissionDate = new DateTime(2023, 5, 10) },
-                new Equipment { Id = 4, Name = "Сверлильный станок SD-50", InventoryNumber = "INV004",
-                               Model = "SD-50", Status = "Списан", CommissionDate = new DateTime(2022, 8, 1) }
-            };
-
-            // Тестовые данные техобслуживания
-            maintenanceList = new List<Maintenance>
+                // Пытаемся загрузить данные из БД
+                if (dbContext?.Database.CanConnect() == true)
+                {
+                    equipmentList = dbContext.Equipment.ToList();
+                    maintenanceList = dbContext.Maintenance.ToList();
+                    txtStatus.Text = " Днные загружены из базы данных";
+                }
+                else
+                {
+                    // Если БД не доступна, используем данные в памяти
+                    UseInMemoryData();
+                }
+            }
+            catch (Exception ex)
             {
-                new Maintenance { Id = 1, EquipmentName = "Токарный станок CNC-500",
-                                PlannedDate = DateTime.Now.AddDays(7), Status = "Запланировано" },
-                new Maintenance { Id = 2, EquipmentName = "Фрезерный станок FZ-200",
-                                PlannedDate = DateTime.Now.AddDays(2), Status = "В работе" },
-                new Maintenance { Id = 3, EquipmentName = "Пресс гидравлический PH-100",
-                                PlannedDate = DateTime.Now.AddDays(14), Status = "Запланировано" }
-            };
+                MessageBox.Show($"Ошибка загрузки из БД: {ex.Message}\nИспользуются данные в памяти.",
+                              "Внимание", MessageBoxButton.OK, MessageBoxImage.Information);
+                UseInMemoryData();
+            }
 
             filteredEquipmentList = new List<Equipment>(equipmentList);
         }
 
+
+        private void UseInMemoryData()
+        {
+            equipmentList = new List<Equipment>
+        {
+            new Equipment { Id = 1, Name = "Токарный станок CNC-500", InventoryNumber = "INV001",
+                       Model = "CNC-500", Status = "В работе", CommissionDate = new DateTime(2023, 1, 15) },
+            new Equipment { Id = 2, Name = "Фрезерный станок FZ-200", InventoryNumber = "INV002",
+                       Model = "FZ-200", Status = "На обслуживании", CommissionDate = new DateTime(2023, 3, 20) }
+        };
+
+            maintenanceList = new List<Maintenance>
+            {       
+                new Maintenance { Id = 1, EquipmentName = "Токарный станок CNC-500",
+                        PlannedDate = DateTime.Now.AddDays(7), Status = "Запланировано" }
+            };
+        }
+
         private void LoadEquipmentData()
         {
+            if (filteredEquipmentList == null || maintenanceList == null) return;
             dgEquipment.ItemsSource = null;
             dgEquipment.ItemsSource = filteredEquipmentList;
 
@@ -63,6 +152,8 @@ namespace EquipmentLifecycleManager
 
         private void UpdateStatistics()
         {
+            if (equipmentList == null) return;
+
             txtTotalEquipment.Text = equipmentList.Count.ToString();
             txtActiveEquipment.Text = equipmentList.Count(e => e.Status == "В работе").ToString();
             txtMaintenanceEquipment.Text = equipmentList.Count(e => e.Status == "На обслуживании").ToString();
@@ -90,16 +181,17 @@ namespace EquipmentLifecycleManager
 
         private void TxtSearch_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (txtSearch.Text != "Поиск оборудования..." && !string.IsNullOrWhiteSpace(.Text))
+            if (equipmentList == null) return;
+
+            if (txtSearch.Text != "Поиск оборудования..." && !string.IsNullOrWhiteSpace(txtSearch.Text))
             {
-                // Фильтрация оборудования
                 var searchText = txtSearch.Text.ToLower();
                 filteredEquipmentList = equipmentList
                     .Where(equipment => equipment.Name.ToLower().Contains(searchText) ||
                                        equipment.InventoryNumber.ToLower().Contains(searchText) ||
                                        equipment.Model.ToLower().Contains(searchText))
                     .ToList();
-                txtStatus.Text = $"Найдено: {filteredEquipmentList.Count} оборудования"; 
+                txtStatus.Text = $"Найдено: {filteredEquipmentList.Count} оборудования";
             }
             else
             {
@@ -139,25 +231,45 @@ namespace EquipmentLifecycleManager
         }
 
         // Обработчики кнопок оборудования
-        private void BtnAddEquipment_Click(object sender, RoutedEventArgs e)
+        private void BtnAddEquipment_Click(object sender, RoutedEventArgs args)
         {
-            var newId = equipmentList.Count > 0 ? equipmentList.Max(e => e.Id) + 1 : 1;
-            var newEquipment = new Equipment
+            try
             {
-                Id = newId,
-                Name = "Новое оборудование",
-                InventoryNumber = $"INV{newId:000}",
-                Model = "Модель",
-                Status = "В работе",
-                CommissionDate = DateTime.Now
-            };
+                var newEquipment = new Equipment
+                {
+                    Name = "Новое оборудование",
+                    InventoryNumber = $"INV{Guid.NewGuid().ToString().Substring(0, 8)}",
+                    Model = "Модель",
+                    Status = "В работе",
+                    CommissionDate = DateTime.Now
+                };
 
-            equipmentList.Add(newEquipment);
-            filteredEquipmentList.Add(newEquipment);
-            LoadEquipmentData();
-            UpdateStatistics();
+                if (dbContext?.Database.CanConnect() == true)
+                {
+                    // Сохраняем в БД
+                    dbContext.Equipment.Add(newEquipment);
+                    dbContext.SaveChanges();
 
-            txtStatus.Text = "Оборудование добавлено";
+                    // Обновляем список из БД
+                    equipmentList = dbContext.Equipment.ToList();
+                }
+                else
+                {
+                    // Сохраняем в памяти
+                    newEquipment.Id = equipmentList.Count > 0 ? equipmentList.Max(e => e.Id) + 1 : 1;
+                    equipmentList.Add(newEquipment);
+                }
+
+                filteredEquipmentList = new List<Equipment>(equipmentList);
+                LoadEquipmentData();
+                UpdateStatistics();
+                txtStatus.Text = "Оборудование добавлено";
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка добавления: {ex.Message}", "Ошибка",
+                              MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void BtnEditEquipment_Click(object sender, RoutedEventArgs e)
@@ -220,7 +332,7 @@ namespace EquipmentLifecycleManager
         }
 
         // Обработчики отчетов
-        private void BtnEquipmentReport_Click(object sender, RoutedEventArgs e)
+        private void BtnEquipmentReport_Click(object sender, RoutedEventArgs args)
         {
             var report = $"ОТЧЕТ ПО ОБОРУДОВАНИЮ\n" +
                         $"Дата формирования: {DateTime.Now:dd.MM.yyyy HH:mm}\n\n" +
@@ -268,24 +380,39 @@ namespace EquipmentLifecycleManager
                 txtStatus.Text = "Выбрано оборудование для действий";
             }
         }
-    }
+        protected override void OnClosed(EventArgs e)
+        {
+            dbContext?.Dispose();
+            base.OnClosed(e);
+        }
 
-    // Модели данных
-    public class Equipment
-    {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public string InventoryNumber { get; set; }
-        public string Model { get; set; }
-        public string Status { get; set; }
-        public DateTime CommissionDate { get; set; }
-    }
+        private void BtnTestDB_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                using (var testContext = new AppDbContext())
+                {
+                    bool canConnect = testContext.Database.CanConnect();
 
-    public class Maintenance
-    {
-        public int Id { get; set; }
-        public string EquipmentName { get; set; }
-        public DateTime PlannedDate { get; set; }
-        public string Status { get; set; }
+                    if (canConnect)
+                    {
+                        int equipmentCount = testContext.Equipment.Count();
+                        int maintenanceCount = testContext.Maintenance.Count();
+
+                        MessageBox.Show($"База данных подключена успешно!\n\n" +
+                                      $"Оборудование в БД: {equipmentCount} записей\n" +
+                                      $"Техобслуживание в БД: {maintenanceCount} записей",
+                                      "Проверка подключения",
+                                      MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"❌ Ошибка подключения: {ex.Message}",
+                              "Ошибка",
+                              MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
     }
 }
