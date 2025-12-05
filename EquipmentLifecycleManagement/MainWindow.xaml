@@ -193,14 +193,19 @@
                 </StackPanel>
             </ScrollViewer>
         </Grid>
-
-        <!-- Status Bar -->
+        
         <StatusBar Grid.Row="2" Background="#E0E0E0">
             <StatusBarItem>
                 <TextBlock x:Name="txtStatus" Text="Готов к работе"/>
             </StatusBarItem>
+            <StatusBarItem HorizontalAlignment="Center">
+                <TextBlock x:Name="txtCurrentUser" Text="Пользователь: "/>
+            </StatusBarItem>
             <StatusBarItem HorizontalAlignment="Right">
-                <TextBlock x:Name="txtUser" Text="Пользователь: Администратор"/>
+                <Button x:Name="btnLogout" Content="🚪 Выйти" 
+                Click="BtnLogout_Click" 
+                Background="Transparent" BorderThickness="0"
+                ToolTip="Выйти из системы"/>
             </StatusBarItem>
         </StatusBar>
 

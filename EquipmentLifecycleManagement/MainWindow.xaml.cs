@@ -19,6 +19,17 @@ namespace EquipmentLifecycleManager
         public MainWindow()
         {
             InitializeComponent();
+            if (CurrentUser.User == null)
+            {
+                MessageBox.Show("Ошибка авторизации!", "Ошибка",
+                              MessageBoxButton.OK, MessageBoxImage.Error);
+                Close();
+                return;
+            }
+            txtCurrentUser.Text = $"Пользователь: {CurrentUser.User.FullName} ({GetRoleName(CurrentUser.User.Role)})";
+
+            SetupAccessByRole();
+
 
             equipmentList = new List<Equipment>();
             maintenanceList = new List<Maintenance>();
@@ -29,7 +40,55 @@ namespace EquipmentLifecycleManager
             LoadEquipmentData();
             UpdateStatistics();
         }
+        // Метод для настройки прав доступа по роли
+        private void SetupAccessByRole()
+        {
+            string role = CurrentUser.User.Role;
 
+            if (role == "Technician") 
+            {
+                btnAddEquipment.IsEnabled = false;
+                btnEditEquipment.IsEnabled = false;
+                btnDeleteEquipment.IsEnabled = false;
+                btnAddMaintenance.IsEnabled = false;
+                // Техник может только выполнять ТО
+            }
+            else if (role == "Manager") 
+            {
+                btnAddEquipment.IsEnabled = false;
+                btnEditEquipment.IsEnabled = false;
+                btnDeleteEquipment.IsEnabled = false;
+                btnAddMaintenance.IsEnabled = false;
+                btnCompleteMaintenance.IsEnabled = false;
+                // Менеджер может только смотреть отчеты
+            }
+            // Администратор и Инженер - полный доступ
+        }
+
+        // Метод для перевода названия роли
+        private string GetRoleName(string role)
+        {
+            if (role == "Admin") return "Администратор";
+            if (role == "Engineer") return "Инженер";
+            if (role == "Technician") return "Техник";
+            if (role == "Manager") return "Менеджер";
+            return role;
+        }
+
+        // Обработчик кнопки выхода (добавьте в XAML кнопку с Click="BtnLogout_Click")
+        private void BtnLogout_Click(object sender, RoutedEventArgs e)
+        {
+            var result = MessageBox.Show("Вы уверены, что хотите выйти?", "Подтверждение",
+                                        MessageBoxButton.YesNo, MessageBoxImage.Question);
+
+            if (result == MessageBoxResult.Yes)
+            {
+                CurrentUser.User = null;
+                var loginWindow = new LoginWindow();
+                loginWindow.Show();
+                Close();
+            }
+        }
         private void InitializeDatabase()
         {
             try
@@ -419,7 +478,16 @@ namespace EquipmentLifecycleManager
             dbContext?.Dispose();
             base.OnClosed(e);
         }
+        // Класс для хранения текущего пользователя
+        public static class CurrentUser
+        {
+            public static User User { get; set; }
 
+            public static bool IsAdmin => User?.Role == "Admin";
+            public static bool IsEngineer => User?.Role == "Engineer";
+            public static bool IsTechnician => User?.Role == "Technician";
+            public static bool IsManager => User?.Role == "Manager";
+        }
         private void BtnTestDB_Click(object sender, RoutedEventArgs e)
         {
             try
