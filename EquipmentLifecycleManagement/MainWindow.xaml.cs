@@ -21,24 +21,26 @@ namespace EquipmentLifecycleManager
             InitializeComponent();
             if (CurrentUser.User == null)
             {
-                MessageBox.Show("Ошибка авторизации!", "Ошибка",
-                              MessageBoxButton.OK, MessageBoxImage.Error);
-                Close();
-                return;
+                // Создаем тестового пользователя для разработки
+                CurrentUser.User = new User
+                {
+                    Username = "admin",
+                    FullName = "Администратор (тестовый)",
+                    Role = "Admin"
+                };
+                txtCurrentUser.Text = $"Пользователь: {CurrentUser.User.FullName} ({GetRoleName(CurrentUser.User.Role)})";
+
+                SetupAccessByRole();
+
+                equipmentList = new List<Equipment>();
+                maintenanceList = new List<Maintenance>();
+                filteredEquipmentList = new List<Equipment>();
+
+                InitializeData();
+                InitializeDatabase();
+                LoadEquipmentData();
+                UpdateStatistics();
             }
-            txtCurrentUser.Text = $"Пользователь: {CurrentUser.User.FullName} ({GetRoleName(CurrentUser.User.Role)})";
-
-            SetupAccessByRole();
-
-
-            equipmentList = new List<Equipment>();
-            maintenanceList = new List<Maintenance>();
-            filteredEquipmentList = new List<Equipment>();
-
-            InitializeData();
-            InitializeDatabase();
-            LoadEquipmentData();
-            UpdateStatistics();
         }
         // Метод для настройки прав доступа по роли
         private void SetupAccessByRole()
@@ -109,6 +111,11 @@ namespace EquipmentLifecycleManager
                     {
                         AddTestData();
                     }
+
+                    if (!dbContext.Users.Any())
+                    {
+                        AddTestUsers();
+                    }
                 }
             }
             catch (Exception ex)
@@ -118,6 +125,44 @@ namespace EquipmentLifecycleManager
                               MessageBoxButton.OK, MessageBoxImage.Warning);
                 txtStatus.Text = "⚠️ Режим работы: данные в памяти (БД не доступна)";
             }
+        }
+
+        private void AddTestUsers()
+        {
+            var testUsers = new List<User>
+    {
+        new User {
+            Username = "admin",
+            Password = "admin123",
+            Role = "Admin",
+            FullName = "Администратор системы",
+            IsActive = true
+        },
+        new User {
+            Username = "engineer",
+            Password = "engineer123",
+            Role = "Engineer",
+            FullName = "Инженер Иванов И.И.",
+            IsActive = true
+        },
+        new User {
+            Username = "technician",
+            Password = "tech123",
+            Role = "Technician",
+            FullName = "Техник Петров П.П.",
+            IsActive = true
+        },
+        new User {
+            Username = "manager",
+            Password = "manager123",
+            Role = "Manager",
+            FullName = "Менеджер Сидоров С.С.",
+            IsActive = true
+        }
+    };
+
+            dbContext.Users.AddRange(testUsers);
+            dbContext.SaveChanges();
         }
 
         private void AddTestData()

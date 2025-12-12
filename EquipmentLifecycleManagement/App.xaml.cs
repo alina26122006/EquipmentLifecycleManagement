@@ -1,31 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 
-namespace EquipmentLifecycleManagement
+namespace EquipmentLifecycleManager
 {
-    /// <summary>
-    /// Логика взаимодействия для App.xaml
-    /// </summary>
     public partial class App : Application
     {
-        protected override void OnStartup(StartupEventArgs e)
+        private void Application_Startup(object sender, StartupEventArgs e)
         {
-            base.OnStartup(e);
 
-            // Обработка необработанных исключений
-            DispatcherUnhandledException += App_DispatcherUnhandledException;
-        }
-
-        private void App_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
-        {
-            MessageBox.Show($"Произошла ошибка: {e.Exception.Message}", "Ошибка",
-                           MessageBoxButton.OK, MessageBoxImage.Error);
-            e.Handled = true;
+            var loginWindow = new LoginWindow();
+            if (loginWindow.ShowDialog() == true)
+            {
+                var mainWindow = new MainWindow();
+                mainWindow.Show();
+            }
+            else
+            {
+                Shutdown();
+            }
         }
     }
 }
