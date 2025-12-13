@@ -129,30 +129,34 @@ namespace EquipmentLifecycleManager
 
         private void AddTestUsers()
         {
-            var testUsers = new List<User>
+            var testUsers = new List<EquipmentLifecycleManager.Data.User>
     {
-        new User {
+        new EquipmentLifecycleManager.Data.User
+        {
             Username = "admin",
             Password = "admin123",
             Role = "Admin",
             FullName = "Администратор системы",
             IsActive = true
         },
-        new User {
+        new EquipmentLifecycleManager.Data.User
+        {
             Username = "engineer",
             Password = "engineer123",
             Role = "Engineer",
             FullName = "Инженер Иванов И.И.",
             IsActive = true
         },
-        new User {
+        new EquipmentLifecycleManager.Data.User
+        {
             Username = "technician",
             Password = "tech123",
             Role = "Technician",
             FullName = "Техник Петров П.П.",
             IsActive = true
         },
-        new User {
+        new EquipmentLifecycleManager.Data.User
+        {
             Username = "manager",
             Password = "manager123",
             Role = "Manager",
@@ -164,7 +168,6 @@ namespace EquipmentLifecycleManager
             dbContext.Users.AddRange(testUsers);
             dbContext.SaveChanges();
         }
-
         private void AddTestData()
         {
             var testEquipment = new List<Equipment>
