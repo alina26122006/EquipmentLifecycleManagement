@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Windows;
+using EquipmentLifecycleManager.Data;
 
 namespace EquipmentLifecycleManager
 {
@@ -17,37 +18,41 @@ namespace EquipmentLifecycleManager
             string username = txtUsername.Text.Trim();
             string password = txtPassword.Password;
 
-            // Простая проверка
+            MessageBox.Show($"Пытаюсь войти: {username}"); // Тест
+
             if (username == "1" && password == "1")
             {
-                CurrentUser.User = new User
+                CurrentUser.User = new EquipmentLifecycleManager.Data.User
                 {
                     Username = "1",
                     FullName = "Администратор",
-                    Role = "Admin"
+                    Role = "Admin",
+                    IsActive = true
                 };
-                DialogResult = true;
-                Close();
+                var mainWindow = new MainWindow();
+                mainWindow.Show();
+
+                this.Close();
                 return;
             }
 
-            // Проверка других пользователей
             var user = CheckUser(username, password);
             if (user != null)
             {
                 CurrentUser.User = user;
-                DialogResult = true;
-                Close();
+
+                var mainWindow = new MainWindow();
+                mainWindow.Show();
+
+                this.Close();
             }
             else
             {
                 ShowError("Неверный логин или пароль");
             }
         }
-
-        private User CheckUser(string username, string password)
+        private EquipmentLifecycleManager.Data.User CheckUser(string username, string password) // ИЗМЕНИТЕ
         {
-            // Стандартные пользователи
             var users = new[]
             {
                 new { Username = "admin", Password = "admin123", Role = "Admin", FullName = "Администратор" },
@@ -61,11 +66,12 @@ namespace EquipmentLifecycleManager
 
             if (foundUser != null)
             {
-                return new User
+                return new EquipmentLifecycleManager.Data.User // ИЗМЕНИТЕ
                 {
                     Username = foundUser.Username,
                     FullName = foundUser.FullName,
-                    Role = foundUser.Role
+                    Role = foundUser.Role,
+                    IsActive = true
                 };
             }
 
@@ -94,20 +100,11 @@ namespace EquipmentLifecycleManager
         }
     }
 
-    // Класс User (если нет в Data)
-    public class User
-    {
-        public int Id { get; set; }
-        public string Username { get; set; }
-        public string Password { get; set; }
-        public string Role { get; set; }
-        public string FullName { get; set; }
-        public bool IsActive { get; set; } = true;
-    }
+
 
     // Статический класс для хранения текущего пользователя
     public static class CurrentUser
     {
-        public static User User { get; set; }
+        public static EquipmentLifecycleManager.Data.User User { get; set; } // ИЗМЕНИТЕ
     }
 }

@@ -8,15 +8,8 @@ namespace EquipmentLifecycleManager
         {
 
             var loginWindow = new LoginWindow();
-            if (loginWindow.ShowDialog() == true)
-            {
-                var mainWindow = new MainWindow();
-                mainWindow.Show();
-            }
-            else
-            {
-                Shutdown();
-            }
+            loginWindow.Show();
+            
         }
     }
 }
