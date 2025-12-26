@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:EquipmentLifecycleManager"
         mc:Ignorable="d"
-        Title="Система управления оборудованием" Height="600" Width="900"
+        Title="Система управления оборудованием" Height="631" Width="900"
         WindowStartupLocation="CenterScreen">
 
     <Grid>
@@ -70,16 +70,21 @@
                                     GotFocus="TxtSearch_GotFocus" 
                                     LostFocus="TxtSearch_LostFocus"
                                     TextChanged="TxtSearch_TextChanged"/>
+                            <ComboBox x:Name="cmbDepartmentFilter" Width="140"
+                                      SelectionChanged="CmbDepartmentFilter_SelectionChanged">
+                                <ComboBoxItem Content="Все отделения" Tag="0"/>
+                            </ComboBox>
                         </StackPanel>
 
                         <DataGrid x:Name="dgEquipment" AutoGenerateColumns="False" 
-                                 Height="300" IsReadOnly="True"
-                                 SelectionChanged="DgEquipment_SelectionChanged">
+                                  Height="300" IsReadOnly="True"
+                                  SelectionChanged="DgEquipment_SelectionChanged">
                             <DataGrid.Columns>
                                 <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="50"/>
                                 <DataGridTextColumn Header="Наименование" Binding="{Binding Name}" Width="200"/>
                                 <DataGridTextColumn Header="Инв. номер" Binding="{Binding InventoryNumber}" Width="100"/>
                                 <DataGridTextColumn Header="Модель" Binding="{Binding Model}" Width="150"/>
+                                <DataGridTextColumn Header="Отделение" Binding="{Binding Department.Name}" Width="120"/>
                                 <DataGridTextColumn Header="Статус" Binding="{Binding Status}" Width="100"/>
                                 <DataGridTextColumn Header="Дата ввода" Binding="{Binding CommissionDate,StringFormat=dd.MM.yyyy}" Width="100"/>
                             </DataGrid.Columns>
@@ -95,11 +100,24 @@
                                     Click="BtnDeleteEquipment_Click"
                                     ToolTip="Добавить новое техническое обслуживание"
                                     Background="#F44336" Foreground="White"/>
+                            <Button x:Name="btnRetireEquipment" Content="Списать" 
+                                    Click="BtnRetireEquipment_Click"
+                                    ToolTip="Списать выбранное оборудование"
+                                    Background="#FF9800" Foreground="White"
+                                    Width="80"/>
                             
+
                             <Button x:Name="btnTestDB" Content="🔍 Проверить БД" 
                             Background="Transparent" BorderThickness="0" HorizontalContentAlignment="Left"
-                            Padding="10,8" Click="BtnTestDB_Click" RenderTransformOrigin="0.827,0.599"/>
-                            
+                            Padding="10,8" Click="BtnTestDB_Click" RenderTransformOrigin="1.118,0.859"/>
+
+                            <Button x:Name="btnDepartments" Content="Отделения" 
+                            Background="Transparent" BorderThickness="0" HorizontalContentAlignment="Left"
+                            Padding="10,8" Margin="0,2" Click="BtnDepartments_Click"/>
+                            <Button x:Name="btnAbout" Content="ℹ️ О проекте" 
+                            Background="Transparent" BorderThickness="0" HorizontalContentAlignment="Left"
+                            Padding="10,8" Margin="0,2" Click="BtnAbout_Click"
+                            ToolTip="Информация о проекте"/>
                         </StackPanel>
                     </StackPanel>
 
@@ -185,6 +203,14 @@
                                 <StackPanel>
                                     <TextBlock Text="Списано" FontSize="12" Foreground="#666"/>
                                     <TextBlock x:Name="txtRetiredEquipment" Text="0" FontSize="18" FontWeight="Bold"/>
+                                </StackPanel>
+                            </Border>
+
+                            <Border Background="#F3E5F5" BorderBrush="#9C27B0" BorderThickness="1" 
+                                    Margin="0,0,10,10" Padding="10" CornerRadius="5">
+                                <StackPanel>
+                                    <TextBlock Text="Оборудование по отделениям" FontSize="12" Foreground="#666"/>
+                                    <TextBlock x:Name="txtDepartmentStats" Text="Загрузка..." FontSize="14" FontWeight="Bold"/>
                                 </StackPanel>
                             </Border>
                         </WrapPanel>

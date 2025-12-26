@@ -1,10 +1,10 @@
 ﻿<Window x:Class="EquipmentLifecycleManager.EquipmentEditWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Добавление оборудования" Height="400" Width="500"
+        Title="Добавление оборудования" Height="646" Width="500"
         WindowStartupLocation="CenterOwner"
         ResizeMode="NoResize">
-    
+
     <Window.Resources>
         <Style TargetType="TextBox">
             <Setter Property="Margin" Value="0,5,0,10"/>
@@ -20,37 +20,50 @@
             <Setter Property="Padding" Value="15,8"/>
             <Setter Property="FontSize" Value="14"/>
         </Style>
+        <Style TargetType="ComboBox">
+            <Setter Property="Margin" Value="0,5,0,10"/>
+            <Setter Property="Padding" Value="5"/>
+            <Setter Property="FontSize" Value="14"/>
+        </Style>
     </Window.Resources>
-    
+
     <Grid Margin="20">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        
+
         <!-- Заголовок -->
         <TextBlock Grid.Row="0" Text="{Binding WindowTitle}" 
                    FontSize="18" FontWeight="Bold" 
                    HorizontalAlignment="Center" Margin="0,0,0,20"/>
-        
+
         <!-- Поля ввода -->
         <StackPanel Grid.Row="1">
             <!-- Наименование -->
             <TextBlock Text="Наименование оборудования *"/>
             <TextBox x:Name="txtName" Text="{Binding EquipmentName, UpdateSourceTrigger=PropertyChanged}"
                     MaxLength="200"/>
-            
+
             <!-- Инвентарный номер -->
             <TextBlock Text="Инвентарный номер *"/>
             <TextBox x:Name="txtInventoryNumber" Text="{Binding InventoryNumber, UpdateSourceTrigger=PropertyChanged}"
                     MaxLength="50"/>
-            
+
             <!-- Модель -->
             <TextBlock Text="Модель"/>
             <TextBox x:Name="txtModel" Text="{Binding Model, UpdateSourceTrigger=PropertyChanged}"
                     MaxLength="100"/>
-            
+
+            <!-- Отделение -->
+            <TextBlock Text="Отделение"/>
+            <ComboBox x:Name="cmbDepartment" 
+                     DisplayMemberPath="Name"
+                     SelectedValuePath="Id"
+                     SelectedValue="{Binding SelectedDepartmentId}"
+                     Margin="0,5,0,10"/>
+
             <!-- Статус -->
             <TextBlock Text="Статус *"/>
             <ComboBox x:Name="cmbStatus" SelectedItem="{Binding Status}"
@@ -60,16 +73,16 @@
                 <ComboBoxItem Content="Списан"/>
                 <ComboBoxItem Content="Резерв"/>
             </ComboBox>
-            
+
             <!-- Дата ввода в эксплуатацию -->
             <TextBlock Text="Дата ввода в эксплуатацию *"/>
             <DatePicker x:Name="dpCommissionDate" SelectedDate="{Binding CommissionDate}"
                        Margin="0,5,0,10" Padding="5"/>
-            
+
             <TextBlock Text="* - обязательные поля" FontStyle="Italic" 
                       Foreground="Gray" FontSize="11" Margin="0,10,0,0"/>
         </StackPanel>
-        
+
         <!-- Кнопки -->
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
             <Button x:Name="btnCancel" Content="Отмена" Click="BtnCancel_Click"

@@ -1,0 +1,129 @@
+﻿<Window x:Class="EquipmentLifecycleManager.AboutWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="О проекте" Height="450" Width="600"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize"
+        Background="White">
+
+    <Window.Resources>
+        <Style TargetType="TextBlock">
+            <Setter Property="Margin" Value="10"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+        </Style>
+        <Style TargetType="Button">
+            <Setter Property="Margin" Value="10"/>
+            <Setter Property="Padding" Value="15,8"/>
+            <Setter Property="FontSize" Value="14"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0" Background="#2E86AB" Padding="20">
+            <StackPanel HorizontalAlignment="Center">
+                <TextBlock Text=" СИСТЕМА УПРАВЛЕНИЯ" 
+                          FontSize="22" FontWeight="Bold" 
+                          Foreground="White" HorizontalAlignment="Center"/>
+                <TextBlock Text="ЖИЗНЕННЫМ ЦИКЛОМ ОБОРУДОВАНИЯ" 
+                          FontSize="18" FontWeight="SemiBold" 
+                          Foreground="White" HorizontalAlignment="Center"/>
+            </StackPanel>
+        </Border>
+
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <StackPanel Margin="20">
+                <Border Background="#F5F5F5" BorderBrush="#CCCCCC" 
+                       BorderThickness="1" CornerRadius="5" Padding="15" Margin="0,0,0,15">
+                    <StackPanel>
+                        <TextBlock Text="ИНФОРМАЦИЯ О ПРОЕКТЕ" 
+                                  FontSize="16" FontWeight="Bold" 
+                                  Foreground="#2E86AB" Margin="0,0,0,10"/>
+
+                        <StackPanel Margin="10,0,0,0">
+                            <TextBlock Text="Тема проекта:" FontWeight="Bold"/>
+                            <TextBlock Text="Система управления жизненным циклом оборудования с планированием технического обслуживания" 
+                                      Foreground="#333" Margin="0,0,0,10"/>
+
+                            <TextBlock Text="Исполнитель:" FontWeight="Bold"/>
+                            <TextBlock Text="Мухамбетова Алина" 
+                                      Foreground="#333" Margin="0,0,0,10"/>
+
+                            <TextBlock Text="Группа:" FontWeight="Bold"/>
+                            <TextBlock Text="4пк2" 
+                                      Foreground="#333" Margin="0,0,0,10"/>
+
+                            <TextBlock Text="Год разработки:" FontWeight="Bold"/>
+                            <TextBlock Text="2025" 
+                                      Foreground="#333" Margin="0,0,0,10"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+
+                <Border Background="#F1F8E9" BorderBrush="#4CAF50" 
+                       BorderThickness="1" CornerRadius="5" Padding="15" Margin="0,0,0,15">
+                    <StackPanel>
+                        <TextBlock Text="💻 ИСПОЛЬЗУЕМЫЕ ТЕХНОЛОГИИ" 
+                                  FontSize="16" FontWeight="Bold" 
+                                  Foreground="#4CAF50" Margin="0,0,0,10"/>
+
+                        <WrapPanel Margin="10,0,0,0">
+                            <Border Background="#E8F5E8" BorderBrush="#4CAF50" 
+                                   BorderThickness="1" CornerRadius="3" 
+                                   Margin="0,0,10,10" Padding="8,5">
+                                <TextBlock Text="C#" FontWeight="SemiBold"/>
+                            </Border>
+                            <Border Background="#E3F2FD" BorderBrush="#2196F3" 
+                                   BorderThickness="1" CornerRadius="3" 
+                                   Margin="0,0,10,10" Padding="8,5">
+                                <TextBlock Text="WPF" FontWeight="SemiBold"/>
+                            </Border>
+                            <Border Background="#F3E5F5" BorderBrush="#9C27B0" 
+                                   BorderThickness="1" CornerRadius="3" 
+                                   Margin="0,0,10,10" Padding="8,5">
+                                <TextBlock Text="Entity Framework" FontWeight="SemiBold"/>
+                            </Border>
+                            <Border Background="#FFF3E0" BorderBrush="#FF9800" 
+                                   BorderThickness="1" CornerRadius="3" 
+                                   Margin="0,0,10,10" Padding="8,5">
+                                <TextBlock Text="SQL Server" FontWeight="SemiBold"/>
+                            </Border>
+                            <Border Background="#FFEBEE" BorderBrush="#F44336" 
+                                   BorderThickness="1" CornerRadius="3" 
+                                   Margin="0,0,10,10" Padding="8,5">
+                                <TextBlock Text="MVVM" FontWeight="SemiBold"/>
+                            </Border>
+                        </WrapPanel>
+                    </StackPanel>
+                </Border>
+
+                <Border Background="#FFF8E1" BorderBrush="#FFC107" 
+                       BorderThickness="1" CornerRadius="5" Padding="15">
+                    <StackPanel>
+                        <TextBlock Text="📝 ОПИСАНИЕ ПРОЕКТА" 
+                                  FontSize="16" FontWeight="Bold" 
+                                  Foreground="#FF9800" Margin="0,0,0,10"/>
+
+                        <TextBlock Text="Данная система предназначена для автоматизации учета и управления оборудованием на промышленных предприятиях. Она позволяет отслеживать жизненный цикл оборудования от ввода в эксплуатацию до списания, планировать техническое обслуживание и анализировать статистику использования." 
+                                  TextAlignment="Justify" Foreground="#333"/>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+
+        <Border Grid.Row="2" Background="#F5F5F5" Padding="10">
+            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                <Button x:Name="btnClose" Content="Закрыть" 
+                       Click="BtnClose_Click"
+                       Background="#2E86AB" Foreground="White"
+                       Padding="20,10"/>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>
